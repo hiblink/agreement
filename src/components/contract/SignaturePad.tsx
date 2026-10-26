@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Eraser } from "lucide-react";
+import { Eraser, Pencil } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ export function SignaturePad({
 }) {
   const [tab, setTab] = useState<"draw" | "type">("draw");
   const [typed, setTyped] = useState(defaultName ?? "");
+  const [hasDrawn, setHasDrawn] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
   const hasInk = useRef(false);
@@ -60,22 +61,27 @@ export function SignaturePad({
     const c = canvasRef.current!;
     c.getContext("2d")!.clearRect(0, 0, c.width, c.height);
     hasInk.current = false;
+    setHasDrawn(false);
     onChange(null);
   };
 
   return (
     <Tabs value={tab} onValueChange={(v) => setTab(v as "draw" | "type")}>
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="draw">Draw signature</TabsTrigger>
+        <TabsTrigger value="draw" className="flex items-center gap-1.5">
+          <Pencil className="h-3.5 w-3.5" />
+          <span>Draw signature</span>
+        </TabsTrigger>
         <TabsTrigger value="type">Type signature</TabsTrigger>
       </TabsList>
       <TabsContent value="draw">
         <div className="relative rounded-md border border-dashed border-input bg-card">
           <canvas
             ref={canvasRef}
-            className="h-40 w-full touch-none text-ink"
+            className="h-40 w-full touch-none text-ink cursor-crosshair"
             onPointerDown={(e) => {
               drawing.current = true;
+              setHasDrawn(true);
               e.currentTarget.setPointerCapture(e.pointerId);
               const ctx = e.currentTarget.getContext("2d")!;
               const p = pos(e);
@@ -96,6 +102,12 @@ export function SignaturePad({
                 onChange({ type: "draw", value: e.currentTarget.toDataURL("image/png") });
             }}
           />
+          {!hasDrawn && (
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2 text-xs text-muted-foreground/50 select-none">
+              <Pencil className="h-3.5 w-3.5 text-muted-foreground/60" />
+              <span>Sign here with pencil, stylus, touch, or mouse</span>
+            </div>
+          )}
           <span className="pointer-events-none absolute bottom-3 left-4 right-4 border-b border-muted-foreground/30" />
           <Button
             type="button"
