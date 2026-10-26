@@ -2,13 +2,34 @@
 import nodemailer from "nodemailer";
 
 function getSmtpTransporter() {
-  const user = process.env["SMTP_USER"];
-  const pass = process.env["SMTP_PASS"];
-  if (!user || !pass) return null;
+  const user = process.env["SMTP_USER"]?.trim();
+  const rawPass = process.env["SMTP_PASS"]?.trim();
+  if (!user || !rawPass) return null;
 
-  const host = process.env["SMTP_HOST"] || "smtp.gmail.com";
-  const port = parseInt(process.env["SMTP_PORT"] || "465", 10);
-  const secure = process.env["SMTP_SECURE"] ? process.env["SMTP_SECURE"] === "true" : port === 465;
+  // Gmail App Passwords often have spaces (e.g. "abcd efgh ijkl mnop") - strip spaces for SMTP auth
+  const pass = rawPass.replace(/\s+/g, "");
+
+  const rawHost = (process.env["SMTP_HOST"] || "").trim();
+  const rawPort = (process.env["SMTP_PORT"] || "").trim();
+
+  // If using Gmail (either explicit host, empty host, or user ends with @gmail.com)
+  const isGmail =
+    !rawHost ||
+    rawHost.toLowerCase() === "smtp.gmail.com" ||
+    user.toLowerCase().endsWith("@gmail.com");
+
+  if (isGmail && (!rawHost || rawHost.toLowerCase() === "smtp.gmail.com")) {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth: { user, pass },
+    });
+  }
+
+  const host = rawHost || "smtp.gmail.com";
+  const port = parseInt(rawPort || "465", 10);
+  const secure = process.env["SMTP_SECURE"]
+    ? process.env["SMTP_SECURE"].trim() === "true"
+    : port === 465;
 
   return nodemailer.createTransport({
     host,
@@ -26,8 +47,8 @@ export async function sendEmail(
   // 1. Prioritize Nodemailer (SMTP) if configured
   const transporter = getSmtpTransporter();
   if (transporter) {
-    const user = process.env["SMTP_USER"]!;
-    const from = process.env["SMTP_FROM"] || `Contracts <${user}>`;
+    const user = process.env["SMTP_USER"]!.trim();
+    const from = process.env["SMTP_FROM"]?.trim() || `Contracts <${user}>`;
     try {
       await transporter.sendMail({
         from,
