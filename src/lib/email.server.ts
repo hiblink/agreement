@@ -1,36 +1,80 @@
-// Server-only email helper using Resend and Supabase Edge Function fallback.
-// Emails are skipped (not failed) when no Resend API key is configured.
+// Server-only email helper using Nodemailer (SMTP) with Resend fallback.
+import nodemailer from "nodemailer";
+
+function getSmtpTransporter() {
+  const user = process.env["SMTP_USER"];
+  const pass = process.env["SMTP_PASS"];
+  if (!user || !pass) return null;
+
+  const host = process.env["SMTP_HOST"] || "smtp.gmail.com";
+  const port = parseInt(process.env["SMTP_PORT"] || "465", 10);
+  const secure = process.env["SMTP_SECURE"] ? process.env["SMTP_SECURE"] === "true" : port === 465;
+
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: { user, pass },
+  });
+}
 
 export async function sendEmail(
   to: string,
   subject: string,
   html: string,
 ): Promise<{ sent: boolean; reason?: string | undefined }> {
-  const key = process.env["RESEND_API_KEY"];
-  if (!key) return { sent: false, reason: "RESEND_API_KEY not configured" };
-  let from = process.env["RESEND_FROM_EMAIL"] || "Contracts <onboarding@resend.dev>";
-  // Public mail providers (e.g. @gmail.com) cannot be used as sender with Resend API
-  if (/@(gmail|googlemail|yahoo|outlook|hotmail|icloud|aol)\.com/i.test(from)) {
-    from = "Contracts <onboarding@resend.dev>";
-  }
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to: [to], subject, html }),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    let reason = `Email provider error (${res.status})`;
+  // 1. Prioritize Nodemailer (SMTP) if configured
+  const transporter = getSmtpTransporter();
+  if (transporter) {
+    const user = process.env["SMTP_USER"]!;
+    const from = process.env["SMTP_FROM"] || `Contracts <${user}>`;
     try {
-      const parsed = JSON.parse(text);
-      if (parsed?.message) reason = parsed.message;
-    } catch {
-      /* ignore JSON parse failure */
+      await transporter.sendMail({
+        from,
+        to,
+        subject,
+        html,
+      });
+      return { sent: true };
+    } catch (err) {
+      console.error("Nodemailer SMTP error:", err);
+      const msg = (err as Error).message || "SMTP transmission error";
+      return { sent: false, reason: `SMTP error: ${msg}` };
     }
-    console.error("Resend error", res.status, text);
-    return { sent: false, reason };
   }
-  return { sent: true };
+
+  // 2. Fallback to Resend API if configured
+  const resendKey = process.env["RESEND_API_KEY"];
+  if (resendKey) {
+    let from = process.env["RESEND_FROM_EMAIL"] || "Contracts <onboarding@resend.dev>";
+    if (/@(gmail|googlemail|yahoo|outlook|hotmail|icloud|aol)\.com/i.test(from)) {
+      from = "Contracts <onboarding@resend.dev>";
+    }
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from, to: [to], subject, html }),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      let reason = `Email provider error (${res.status})`;
+      try {
+        const parsed = JSON.parse(text);
+        if (parsed?.message) reason = parsed.message;
+      } catch {
+        /* ignore JSON parse failure */
+      }
+      console.error("Resend error", res.status, text);
+      return { sent: false, reason };
+    }
+    return { sent: true };
+  }
+
+  return {
+    sent: false,
+    reason:
+      "No email provider configured. Please set SMTP_USER and SMTP_PASS (Nodemailer) or RESEND_API_KEY in environment variables.",
+  };
 }
 
 export async function notifyContractSent(params: {
