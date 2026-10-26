@@ -16,8 +16,15 @@ export async function sendEmail(
   });
   if (!res.ok) {
     const text = await res.text();
+    let reason = `Email provider error (${res.status})`;
+    try {
+      const parsed = JSON.parse(text);
+      if (parsed?.message) reason = parsed.message;
+    } catch {
+      /* ignore JSON parse failure */
+    }
     console.error("Resend error", res.status, text);
-    return { sent: false, reason: `Email provider error (${res.status})` };
+    return { sent: false, reason };
   }
   return { sent: true };
 }
