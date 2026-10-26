@@ -173,7 +173,7 @@ export function DocumentView({
 
         {/* Page numbering aesthetic */}
         <div className="mt-8 flex items-center justify-between border-t border-border/40 pt-4 text-[10px] tracking-widest text-muted-foreground font-mono">
-          <span>INKLINE SECURE CONTRACT</span>
+          <span>HIBLINK AGREEMENT SECURE CONTRACT</span>
           <span>PAGE 1 OF 1</span>
         </div>
       </footer>

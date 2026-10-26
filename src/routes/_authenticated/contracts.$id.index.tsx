@@ -17,7 +17,7 @@ import {
 export const Route = createFileRoute("/_authenticated/contracts/$id/")({
   head: () => ({
     meta: [
-      { title: "Contract — Inkline" },
+      { title: "Contract — Hiblink Agreement" },
       { name: "description", content: "View contract details." },
     ],
   }),

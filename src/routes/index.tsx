@@ -6,13 +6,13 @@ import { Logo } from "@/components/AppHeader";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Inkline — Send contracts, get them signed" },
+      { title: "Hiblink Agreement — Send contracts, get them signed" },
       {
         name: "description",
         content:
           "Draft contracts with dynamic client fields, share a secure signing link and track every signature.",
       },
-      { property: "og:title", content: "Inkline — Send contracts, get them signed" },
+      { property: "og:title", content: "Hiblink Agreement — Send contracts, get them signed" },
       {
         property: "og:description",
         content:

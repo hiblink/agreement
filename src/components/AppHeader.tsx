@@ -9,7 +9,7 @@ export function Logo() {
       <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
         <FileSignature className="h-4 w-4" />
       </span>
-      Inkline
+      Hiblink Agreement
     </span>
   );
 }

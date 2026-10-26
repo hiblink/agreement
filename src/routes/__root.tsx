@@ -80,12 +80,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Inkline — Contracts & e-signatures" },
+      { title: "Hiblink Agreement — Contracts & e-signatures" },
       {
         name: "description",
         content: "Build contracts, send signing links and collect legally binding e-signatures.",
       },
-      { property: "og:title", content: "Inkline — Contracts & e-signatures" },
+      { property: "og:title", content: "Hiblink Agreement — Contracts & e-signatures" },
       {
         property: "og:description",
         content: "Build contracts, send signing links and collect legally binding e-signatures.",

@@ -7,7 +7,7 @@ import type { EditableField, FooterConfig, HeaderConfig } from "@/lib/contracts"
 export const Route = createFileRoute("/_authenticated/contracts/$id/edit")({
   head: () => ({
     meta: [
-      { title: "Edit contract — Inkline" },
+      { title: "Edit contract — Hiblink Agreement" },
       { name: "description", content: "Edit a contract." },
     ],
   }),

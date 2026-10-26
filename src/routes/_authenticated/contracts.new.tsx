@@ -5,7 +5,7 @@ import { DEFAULT_BODY, DEFAULT_FIELDS } from "@/lib/contracts";
 export const Route = createFileRoute("/_authenticated/contracts/new")({
   head: () => ({
     meta: [
-      { title: "New contract — Inkline" },
+      { title: "New contract — Hiblink Agreement" },
       { name: "description", content: "Build a new contract." },
     ],
   }),

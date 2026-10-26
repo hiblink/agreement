@@ -22,10 +22,10 @@ export const Route = createFileRoute("/sign/$token")({
   loader: ({ params }) => getSigningContract({ data: { token: params.token } }).catch(() => null),
   head: () => ({
     meta: [
-      { title: "Review & Sign Document — Inkline" },
+      { title: "Review & Sign Document — Hiblink Agreement" },
       { name: "description", content: "Review and electronically sign your agreement." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Review & Sign Document — Inkline" },
+      { property: "og:title", content: "Review & Sign Document — Hiblink Agreement" },
       { property: "og:description", content: "Review and electronically sign your agreement." },
     ],
   }),

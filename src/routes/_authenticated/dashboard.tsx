@@ -47,7 +47,7 @@ import {
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Contract Dashboard — Inkline" },
+      { title: "Contract Dashboard — Hiblink Agreement" },
       { name: "description", content: "Manage your contracts, invitations, and signature status." },
     ],
   }),

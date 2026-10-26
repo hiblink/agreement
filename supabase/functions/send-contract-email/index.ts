@@ -65,7 +65,7 @@ function emailLayout(content: string): string {
                 <tr>
                   <td>
                     <span style="display: inline-block; font-size: 18px; font-weight: 700; color: #4338ca; letter-spacing: -0.02em;">
-                      ✦ Inkline Contracts
+                      ✦ Hiblink Agreement
                     </span>
                   </td>
                 </tr>
@@ -79,7 +79,7 @@ function emailLayout(content: string): string {
           </tr>
           <tr>
             <td style="padding: 24px 36px; background-color: #f8fafc; border-top: 1px solid #f1f5f9; font-size: 12px; color: #64748b; line-height: 1.5;">
-              <p style="margin: 0;">This email was sent via Inkline Digital Contract Management. All electronic signatures collected are legally binding in accordance with the ESIGN Act and UETA.</p>
+              <p style="margin: 0;">This email was sent via Hiblink Agreement Digital Contract Management. All electronic signatures collected are legally binding in accordance with the ESIGN Act and UETA.</p>
             </td>
           </tr>
         </table>
@@ -155,7 +155,7 @@ Deno.serve(async (req: Request) => {
 
   const resendApiKey = Deno.env.get("RESEND_API_KEY");
   const fromEmail =
-    Deno.env.get("RESEND_FROM_EMAIL") || "Inkline Contracts <onboarding@resend.dev>";
+    Deno.env.get("RESEND_FROM_EMAIL") || "Hiblink Agreement <onboarding@resend.dev>";
 
   try {
     const payload: EmailPayload = await req.json();

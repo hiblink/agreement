@@ -10,9 +10,9 @@ import { Logo } from "@/components/AppHeader";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Inkline" },
+      { title: "Sign in — Hiblink Agreement" },
       { name: "description", content: "Sign in to manage your contracts and signatures." },
-      { property: "og:title", content: "Sign in — Inkline" },
+      { property: "og:title", content: "Sign in — Hiblink Agreement" },
       { property: "og:description", content: "Sign in to manage your contracts and signatures." },
     ],
   }),
