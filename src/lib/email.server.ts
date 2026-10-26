@@ -8,7 +8,11 @@ export async function sendEmail(
 ): Promise<{ sent: boolean; reason?: string | undefined }> {
   const key = process.env["RESEND_API_KEY"];
   if (!key) return { sent: false, reason: "RESEND_API_KEY not configured" };
-  const from = process.env["RESEND_FROM_EMAIL"] || "Contracts <onboarding@resend.dev>";
+  let from = process.env["RESEND_FROM_EMAIL"] || "Contracts <onboarding@resend.dev>";
+  // Public mail providers (e.g. @gmail.com) cannot be used as sender with Resend API
+  if (/@(gmail|googlemail|yahoo|outlook|hotmail|icloud|aol)\.com/i.test(from)) {
+    from = "Contracts <onboarding@resend.dev>";
+  }
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
