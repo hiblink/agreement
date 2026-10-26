@@ -41,10 +41,17 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
+        const baseUrl =
+          import.meta.env["VITE_APP_URL"] ||
+          (typeof window !== "undefined" && window.location.origin.startsWith("http")
+            ? window.location.origin
+            : "https://agreement-seven-murex.vercel.app");
+        const redirectUrl = `${baseUrl.replace(/\/+$/, "")}/dashboard`;
+
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/dashboard" },
+          options: { emailRedirectTo: redirectUrl },
         });
         if (error) throw error;
         if (!data.session) toast.success("Check your email to confirm your account.");
